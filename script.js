@@ -22,11 +22,18 @@ searchForm.addEventListener('submit', (event) => {
   }
   previousSearchTerms = localStorage.getItem('searchTerm').split(',');
   const listItems = previousSearchTerms.map(term => {
-    return `<ul class="city">${term}</ul>`;
+    return `<ul class="city" id="city-list">${term}</ul>`;
   });
+  //clear button
   citiesContainer.innerHTML = listItems.join('');
+  const clear = document.getElementById('clear');
 
-  
+  clear.addEventListener('click', () => {
+    localStorage.removeItem('searchTerm');
+    citiesContainer.innerHTML = '';
+  });
+
+
 
 
   // getting the api
