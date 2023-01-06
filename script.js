@@ -10,6 +10,7 @@ const hour = now.getHours();
 const minute = now.getMinutes();
 searchForm.addEventListener('submit', (event) => {
   event.preventDefault();
+  
   //list of previous searches
   const searchTerm = searchForm.elements.search.value;
   let previousSearchTerms = localStorage.getItem('searchTerm');
@@ -22,7 +23,8 @@ searchForm.addEventListener('submit', (event) => {
   }
   previousSearchTerms = localStorage.getItem('searchTerm').split(',');
   const listItems = previousSearchTerms.map(term => {
-    return `<ul class="city" id="city-list">${term}</ul>`;
+    return `<button class="city" id="city" data-term="${term}">${term}</button>`;
+    
   });
   //clear button
   citiesContainer.innerHTML = listItems.join('');
@@ -31,10 +33,20 @@ searchForm.addEventListener('submit', (event) => {
   clear.addEventListener('click', () => {
     localStorage.removeItem('searchTerm');
     citiesContainer.innerHTML = '';
+
   });
+  // button for past terms
+  document.querySelectorAll('.city').forEach(button => {
+    event.preventDefault();
 
-
-
+    button.addEventListener('click', event => {
+      console.log('button clicked');
+      event.preventDefault();
+      const term = event.target.dataset.term;
+      searchForm.elements.search.value = term;
+      searchForm.submit();
+   
+    });
 
   // getting the api
   const city = searchForm.elements.search.value;
@@ -59,33 +71,48 @@ searchForm.addEventListener('submit', (event) => {
     <p>Wind Speed: ${windSpeed} MPH</p>
   `;
   document.getElementById('weatherOutput').innerHTML = html;
-  
+  const container = document.querySelector('#weatherOutput');
+  const icon = document.createElement('img');
+  icon.src = 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '.png';
+  container.appendChild(icon);
+
+
+
+  // get the weather data for the next 4 days
   fetch(forecastURL).then(response => response.json())
   .then(response => {
     const forecastData = response.list;
-    // get the weather data for the next 4 days
+    
     const nextDays = forecastData.slice(0, 4);
     nextDays.forEach((day, index) => {
       const temperature = day.main.temp;
       const humidity = day.main.humidity;
+      const windSpeed = day.wind.speed;
+      const dateString = day.dt_txt;
+      const weatherCondition = day.weather[0];
+
+      // future icon for current weather condition
+      const iconUrl = `http://openweathermap.org/img/wn/${weatherCondition.icon}@2x.png`;
+      const iconFuture = document.createElement('img');
+      iconFuture.src = iconUrl;
+      // date for the following days
+      const date = new Date(dateString);
+      const formattedDate = `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}`;
+    
       const container = document.querySelector(`#card-${index + 1}`);
-      document.querySelector('.card-' + (index + 1)).innerHTML = html;
       container.innerHTML = `
-      <h2>Weather for ${city}  </h2>
-        <h2>Temperature: ${temperature}</h2>
+        <h2>Weather for ${city} on ${formattedDate}</h2>
+        <p>Temperature: ${temperature}</p>
         <p>Humidity: ${humidity}%</p>
         <p>Wind Speed: ${windSpeed} MPH</p>
-        
+        ${iconFuture.outerHTML}
       `;
     });
-  });
-
-
-  
     
+  }); 
 });
 });
-
+});
 
 
 
