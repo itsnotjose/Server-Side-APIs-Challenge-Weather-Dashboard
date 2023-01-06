@@ -40,7 +40,7 @@ searchForm.addEventListener('submit', (event) => {
   const city = searchForm.elements.search.value;
   const APIKey = "7f90550ecbce4a56347e8acc00c6fbc2";
   const queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + APIKey;
-
+  const forecastURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + APIKey;
   fetch(queryURL).then(response => response.json())
   .then(response => {
     // html output
@@ -60,21 +60,31 @@ searchForm.addEventListener('submit', (event) => {
   `;
   document.getElementById('weatherOutput').innerHTML = html;
   
+  fetch(forecastURL).then(response => response.json())
+  .then(response => {
+    const forecastData = response.list;
+    // get the weather data for the next 4 days
+    const nextDays = forecastData.slice(0, 4);
+    nextDays.forEach((day, index) => {
+      const temperature = day.main.temp;
+      const humidity = day.main.humidity;
+      const container = document.querySelector(`#card-${index + 1}`);
+      document.querySelector('.card-' + (index + 1)).innerHTML = html;
+      container.innerHTML = `
+      <h2>Weather for ${city}  </h2>
+        <h2>Temperature: ${temperature}</h2>
+        <p>Humidity: ${humidity}%</p>
+        <p>Wind Speed: ${windSpeed} MPH</p>
+        
+      `;
+    });
+  });
 
-    // icon of current conditions
-  const container = document.querySelector('#weatherOutput');
-  const icon = document.createElement('img');
-  icon.src = 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '.png';
-  container.appendChild(icon);
 
-
+  
     
 });
 });
-  
-
-
-
 
 
 
