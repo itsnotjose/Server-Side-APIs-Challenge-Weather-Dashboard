@@ -43,12 +43,12 @@ searchForm.addEventListener("submit", (event) => {
     const city = searchForm.elements.search.value;
     const APIKey = "7f90550ecbce4a56347e8acc00c6fbc2";
     const queryURL =
-      "http://api.openweathermap.org/data/2.5/weather?q=" +
+      "https://api.openweathermap.org/data/2.5/weather?q=" +
       city +
       "&units=imperial&appid=" +
       APIKey;
     const forecastURL =
-      "http://api.openweathermap.org/data/2.5/forecast?q=" +
+      "https://api.openweathermap.org/data/2.5/forecast?q=" +
       city +
       "&units=imperial&appid=" +
       APIKey;
@@ -94,7 +94,7 @@ searchForm.addEventListener("submit", (event) => {
               const weatherCondition = day.weather[0];
 
               // future icon for current weather condition
-              const iconUrl = `http://openweathermap.org/img/wn/${weatherCondition.icon}@2x.png`;
+              const iconUrl = `https://openweathermap.org/img/wn/${weatherCondition.icon}@2x.png`;
               const iconFuture = document.createElement("img");
               iconFuture.src = iconUrl;
               // date for the following days
